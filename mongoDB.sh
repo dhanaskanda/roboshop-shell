@@ -4,7 +4,21 @@ ID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
 LOGSFILE="/tmp/$0-$TIMESTAMP.log"
 
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
+
 echo "Script is started execution at" &>> $LOGSFILE
+
+CHECK(){
+    if [ $1 -ne 0 ]
+    then
+        echo "$2.. Failed"
+    else
+        echo "$2.. Success"
+    fi
+}
 
 if [ $ID -ne 0 ]
 then
@@ -13,3 +27,21 @@ then
 else
     echo "You are a root user"
 fi
+
+cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGSFILE # Mainting the repo in mongo.repo file
+CHECK $? "Copying mongo.repo"
+
+dnf install mongodb-org -y &>> $LOGSFILE # Installing MongoDB
+CHECK $? "Installing mongoDB"
+
+systemctl enable mongod &>> $LOGSFILE # Enabling the mongoDB service to auto restart
+CHECK $? "Enabling mongoDB"
+
+systemctl start mongod &>> $LOGSFILE # Starting the mongoDB service
+CHECK $? "Starting mongoDB"
+
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOGSFILE
+CHECK $? "Remote connection to mongoDB" 
+
+systemctl restart mongod # Restart the mongoDB service
+CHECK $? "Restarting mongoDB" 
