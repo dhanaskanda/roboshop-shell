@@ -9,14 +9,15 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-echo "Script is started execution at" &>> $LOGSFILE
+echo "Script is started execution at $Y $TIMESTAMP $N" &>> $LOGSFILE
 
 CHECK(){
     if [ $1 -ne 0 ]
     then
-        echo "$2.. Failed"
+        echo -e "$2.. $R Failed $N"
+        exit 1
     else
-        echo "$2.. Success"
+        echo -e "$2.. $G Success $N"
     fi
 }
 
@@ -43,5 +44,5 @@ CHECK $? "Starting mongoDB"
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOGSFILE
 CHECK $? "Remote connection to mongoDB" 
 
-systemctl restart mongod # Restart the mongoDB service
+systemctl restart mongod &>> $LOGSFILE # Restart the mongoDB service
 CHECK $? "Restarting mongoDB" 
