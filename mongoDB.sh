@@ -26,7 +26,7 @@ then
     echo "Error: Run the script with the root user"
     exit  1 # if not true
 else
-    echo "You are a root user"
+    echo -e "You are a $G root $N user"
 fi
 
 cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGSFILE # Mainting the repo in mongo.repo file
