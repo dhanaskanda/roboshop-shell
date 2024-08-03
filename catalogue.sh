@@ -47,7 +47,7 @@ yum list installed nodejs &>> $LOGSFILE
     fi
 
 id roboshop &>> $LOGSFILE
-    if [$? -ne 0 ]
+    if [ $? -ne 0 ]
     then
         useradd roboshop &>> $LOGSFILE # Creating a roboshot if doesn't exits on the server
         CHECK $? "roboshop user creation"
