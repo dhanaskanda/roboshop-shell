@@ -46,7 +46,7 @@ yum list installed nodejs &>> $LOGSFILE
         echo -e "NodeJS already installed.. $Y SKIPPING $N"
     fi
 
-id roboshop
+id roboshop &>> $LOGSFILE
     if [$? -ne 0 ]
     then
         useradd roboshop &>> $LOGSFILE # Creating a roboshot if doesn't exits on the server
@@ -79,11 +79,11 @@ CHECK $? "Enabling Daemon"
 systemctl start catalogue &>> $LOGSFILE
 CHECK $? "Starting catalogue service"
 
-cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo $>> $LOGSFILE
+cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGSFILE
 CHECK $? "Preparing to install mongodb shell"
 
-dnf install mongodb-org-shell -y $>> $LOGSFILE # Installing mongodb client to connect and load the schemas into mongo DB.
+dnf install mongodb-org-shell -y &>> $LOGSFILE # Installing mongodb client to connect and load the schemas into mongo DB.
 CHECK $? "Installing mongoDB shell client"
 
-mongo --host $MONGODB_HOST </app/schema/catalogue.js $>> $LOGSFILE
+mongo --host $MONGODB_HOST </app/schema/catalogue.js &>> $LOGSFILE
 CHECK $? "Loading catalogue data into mongoDB"
