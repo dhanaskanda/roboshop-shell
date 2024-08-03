@@ -32,8 +32,15 @@ fi
 cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGSFILE # Mainting the repo in mongo.repo file
 CHECK $? "Copying mongo.repo"
 
-dnf install mongodb-org -y &>> $LOGSFILE # Installing MongoDB
-CHECK $? "Installing mongoDB"
+yum list installed mongodb
+
+if [ $? -ne 0 ]
+then
+    dnf install mongodb-org -y &>> $LOGSFILE # Installing MongoDB
+    CHECK $? "Installing mongoDB"
+else
+    echo -e "mongoDB is already installed.. $Y SKIPPING $N"
+fi
 
 systemctl enable mongod &>> $LOGSFILE # Enabling the mongoDB service to auto restart
 CHECK $? "Enabling mongoDB"
