@@ -32,7 +32,7 @@ fi
 cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGSFILE # Mainting the repo in mongo.repo file
 CHECK $? "Copying mongo.repo"
 
-yum list installed mongodb
+yum list installed mongodb &>> $LOGSFILE
 
 if [ $? -ne 0 ]
 then
