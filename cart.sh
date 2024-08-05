@@ -63,7 +63,7 @@ CHECK $? "Downloading cart application"
 cd /app &>> $LOGSFILE
 CHECK $? "Moving to directroy"
 
-unzip /tmp/cart.zip &>> $LOGSFILE
+unzip -o /tmp/cart.zip &>> $LOGSFILE
 CHECK $? "Unzipping the cart application to the /app path"
 
 npm install &>> $LOGSFILE 
