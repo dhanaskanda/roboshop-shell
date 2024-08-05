@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script is to install the catalogue application with nodejs18 version
+# This script is to install the user application with nodejs18 version
 
 ID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
@@ -45,3 +45,45 @@ yum list installed nodejs &>> $LOGSFILE
     else
         echo -e "NodeJS already installed.. $Y SKIPPING $N"
     fi
+
+id roboshop &>> $LOGSFILE
+    if [ $? -ne 0 ]
+    then
+        useradd roboshop &>> $LOGSFILE # Creating a roboshot if doesn't exits on the server
+        CHECK $? "roboshop user creation"
+    else
+        echo -e "user already exists.. $Y SKIPPING $N"
+    fi
+
+mkdir -p /app &>> $LOGSFILE # Creating /app directory
+CHECK $? "/app directory creation"
+
+curl -o /tmp/user.zip https://roboshop-builds.s3.amazonaws.com/user.zip &>> $LOGSFILE # Downloading the user appplication
+
+CHECK $? "Downloading user application"
+
+cd /app
+
+unzip -o /tmp/user.zip &>> $LOGSFILE 
+CHECK $? "Unzipping the app content to /app directory" 
+
+npm install &>> $LOGSFILE # Installing the dependencies
+CHECK $? "Installing dependencies"
+
+cp /home/centos/roboshop-shell/user.service /etc/systemd/system/user.service &>> $LOGSFILE
+CHECK $? "Created a user service to start as systemctl service"
+
+systemctl daemon-reload &>> $LOGSFILE
+CHECK $? "Enabling Daemon"
+
+systemctl start user &>> $LOGSFILE
+CHECK $? "Starting user service"
+
+cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGSFILE
+CHECK $? "Preparing to install mongodb shell"
+
+dnf install mongodb-org-shell -y &>> $LOGSFILE # Installing mongodb client to connect and load the schemas into mongo DB.
+CHECK $? "Installing mongoDB shell client"
+
+mongo --host $MONGODB_HOST </app/schema/user.js &>> $LOGSFILE
+CHECK $? "Loading user data into mongoDB"
