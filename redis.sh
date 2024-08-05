@@ -47,7 +47,7 @@ dnf list installed redis
         echo -e "Redis already exists.. $Y Skipping $N"
     fi
 
-sed -i '/s/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf &>> $LOGSFILE
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf
 CHECK $? "allowing remote connections"
 
 systemctl enable redis &>> $LOGSFILE
