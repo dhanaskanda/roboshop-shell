@@ -31,13 +31,13 @@ else
     echo -e "You are a $G root $N user"
 fi
 
-dnf module disable mysql -y
+dnf module disable mysql -y &>> $LOGSFILE
 CHECK $? "Disabling the default mysql package"
 
 cp /home/centos/roboshop-shell/mysql.repo /etc/yum.repos.d/mysql.repo &>> $LOGSFILE
 CHECK $? "Set MySQL5.7 repo file"
 
-dnf list installed mysql-community-server
+dnf list installed mysql-community-server &>> $LOGSFILE
 
 if [ $? -ne 0 ]
 then
@@ -50,10 +50,10 @@ fi
 systemctl enable mysqld &>> $LOGSFILE
 CHECK $? "Enabling mysqld service to start from reboot"
 
-systemctl start mysqld 
+systemctl start mysqld &>> $LOGSFILE
 CHECK $? "Starting mysql server"
 
-mysql_secure_installation --set-root-pass RoboShop@1
+mysql_secure_installation --set-root-pass RoboShop@1 &>> $LOGSFILE
 CHECK $? "Set the Mysql root password"
 
 
