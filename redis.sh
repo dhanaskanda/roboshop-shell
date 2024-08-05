@@ -37,8 +37,15 @@ CHECK $? "Installing redisDB packages"
 dnf module enable redis:remi-6.2 -y &>> $LOGSFILE
 CHECK $? "Enable Redis 6.2 from package streams"
 
-dnf install redis -y &>> $LOGSFILE
-CHECK $? "Installig redis"
+dnf list installed redis
+
+    if [ $? -ne 0 ]
+    then
+        dnf install redis -y &>> $LOGSFILE # Installing redis if not installed already
+        CHECK $? "Installig redis"
+    else
+        echo -e "Redis already exists.. $Y Skipping $N"
+    fi
 
 sed -i '/s/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf &>> $LOGSFILE
 CHECK $? "allowing remote connections"
