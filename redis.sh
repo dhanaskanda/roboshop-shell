@@ -30,3 +30,21 @@ then
 else
     echo -e "You are a $G root $N user"
 fi
+
+dnf install https://rpms.remirepo.net/enterprise/remi-release-8.rpm -y &>> $LOGSFILE
+CHECK $? "Installing redisDB packages"
+
+dnf module enable redis:remi-6.2 -y &>> $LOGSFILE
+CHECK $? "Enable Redis 6.2 from package streams"
+
+dnf install redis -y &>> $LOGSFILE
+CHECK $? "Installig redis"
+
+sed -i '/s/127.0.0.1/g' /etc/redis/redis.conf &>> $LOGSFILE
+CHECK $? "allowing remote connections"
+
+systemctl enable redis &>> $LOGSFILE
+CHECK $? "Enabling the redis service"
+
+systemctl start redis &>> $LOGSFILE
+CHECK $? "Starting the redis service"
