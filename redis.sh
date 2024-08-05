@@ -40,7 +40,7 @@ CHECK $? "Enable Redis 6.2 from package streams"
 dnf install redis -y &>> $LOGSFILE
 CHECK $? "Installig redis"
 
-sed -i '/s/127.0.0.1/g' /etc/redis/redis.conf &>> $LOGSFILE
+sed -i '/s/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf &>> $LOGSFILE
 CHECK $? "allowing remote connections"
 
 systemctl enable redis &>> $LOGSFILE
